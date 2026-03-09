@@ -1,6 +1,7 @@
 package org.example.springbootlabb1ms.book;
 
 import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
+import org.example.springbootlabb1ms.book.dto.UpdateBookDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,37 @@ public class BookMapperTest {
         assertThat(book.getIsbn()).isEqualTo("9780132350884");
     }
 
-    
+    @Test
+    @DisplayName("updateEntity-method should update existing book from UpdateBookDTO")
+    void updateEntity_shouldUpdateExistingBookFromUpdateBookDTO() {
+        Book existingBook = new Book();
+
+        existingBook.setId(1L);
+        existingBook.setTitle("Old title");
+        existingBook.setAuthor("Old author");
+        existingBook.setDescription("Old description");
+        existingBook.setPublisher("Old publisher");
+        existingBook.setPublicationDate(LocalDate.of(2010,10,10));
+        existingBook.setIsbn("old isbn");
+
+        UpdateBookDTO dto = new UpdateBookDTO();
+
+        dto.setTitle("New title");
+        dto.setAuthor("New author");
+        dto.setDescription("New description");
+        dto.setPublisher("New publisher");
+        dto.setPublicationDate(LocalDate.of(2011,11,11));
+        dto.setIsbn("new isbn");
+
+        bookMapper.updateEntity(dto, existingBook);
+
+        assertThat(existingBook.getId().longValue()).isEqualTo(1L);
+        assertThat(existingBook.getTitle()).isEqualTo("New title");
+        assertThat(existingBook.getAuthor()).isEqualTo("New author");
+        assertThat(existingBook.getDescription()).isEqualTo("New description");
+        assertThat(existingBook.getPublisher()).isEqualTo("New publisher");
+        assertThat(existingBook.getPublicationDate()).isEqualTo(LocalDate.of(2011,11,11));
+        assertThat(existingBook.getIsbn()).isEqualTo("new isbn");
+    }
 
 }
