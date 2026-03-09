@@ -1,5 +1,6 @@
 package org.example.springbootlabb1ms.book;
 
+import org.example.springbootlabb1ms.ResourceNotFoundException;
 import org.example.springbootlabb1ms.book.dto.BookDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,6 +66,19 @@ public class BookServiceTest {
         BookDTO result = bookService.findById(3L);
 
         assertThat(result.getId()).isEqualTo(3L);
+    }
+
+    @Test
+    @DisplayName("findById-method should throw ResourceDoesNotExistException when book does not exist")
+    void findById_shouldThrowExceptionWhenBookDoesNotExist()
+    {
+        when(bookRepository.findById(100L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(()-> bookService.findById(100L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("book with id 100 not found");
+
+
     }
 
 }
