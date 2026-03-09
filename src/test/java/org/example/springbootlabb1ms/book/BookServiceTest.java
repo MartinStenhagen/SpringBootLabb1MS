@@ -8,7 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -42,6 +44,26 @@ public class BookServiceTest {
         assertThat(result.size()).isEqualTo(2);
         assertThat(result.get(0).getTitle()).isEqualTo(book1.getTitle());
         assertThat(result.get(1).getTitle()).isEqualTo(book2.getTitle());
+    }
+
+    @Test
+    @DisplayName("findById-method should return BookDTO when book exists")
+    void findById_shouldReturnBookDTOWhenBookExists()
+    {
+        Book book = new Book();
+
+        book.setId(3L);
+        book.setTitle("Another title");
+        book.setAuthor("Another author");
+        book.setDescription("Another description");
+        book.setPublisher("Another publisher");
+        book.setPublicationDate(LocalDate.of(1988,8,8));
+
+        when(bookRepository.findById(3L)).thenReturn(Optional.of(book));
+
+        BookDTO result = bookService.findById(3L);
+
+        assertThat(result.getId()).isEqualTo(3L);
     }
 
 }
