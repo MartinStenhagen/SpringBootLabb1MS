@@ -1,20 +1,12 @@
-package org.example.springbootlabb1ms.book;
+package org.example.springbootlabb1ms.book.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-
-@Entity
-@Table(name = "books")
-public class Book {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UpdateBookDTO {
 
     @NotBlank(message = "title is required")
     @Size(max = 200, message = "title must be 200 characters or less")
@@ -39,20 +31,7 @@ public class Book {
     @Size(max = 20, message = "isbn must be 20 characters or less")
     private String isbn;
 
-    public Book() {}
-
-    public Book(String title, String author, String description, String publisher, LocalDate publicationDate, String isbn) {
-        this.title = title;
-        this.author = author;
-        this.description = description;
-        this.publisher = publisher;
-        this.publicationDate = publicationDate;
-        this.isbn = isbn;
-    }
-
-    public Long getId() {
-        return id;
-    }
+    public UpdateBookDTO() {}
 
     public String getTitle() {
         return title;
