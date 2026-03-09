@@ -14,7 +14,7 @@ public class BookDTO {
 
     public BookDTO() {}
 
-    public BookDTO(Long id, String title, String author, String description, String publisher, LocalDate publicationDate) {
+    public BookDTO(Long id, String title, String author, String description, String publisher, LocalDate publicationDate, String isbn) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -46,6 +46,14 @@ public class BookDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
     }
 
     public LocalDate getPublicationDate() {
