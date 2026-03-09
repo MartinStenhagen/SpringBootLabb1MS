@@ -1,5 +1,6 @@
 package org.example.springbootlabb1ms.book;
 
+import org.example.springbootlabb1ms.book.dto.BookDTO;
 import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
 import org.example.springbootlabb1ms.book.dto.UpdateBookDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,4 +75,24 @@ public class BookMapperTest {
         assertThat(existingBook.getIsbn()).isEqualTo("new isbn");
     }
 
+    @Test
+    @DisplayName("toDTO-method should map Book to BookDTO")
+    void toDTO_shouldMapBookToBookDTO() {
+        Book book = new Book();
+        book.setId(2L);
+        book.setTitle("Some title");
+        book.setAuthor("Some author");
+        book.setDescription("Some description");
+        book.setPublisher("Some publisher");
+        book.setPublicationDate(LocalDate.of(1999,9,19));
+
+        BookDTO dto = bookMapper.toDto(book);
+
+        assertThat(dto.getId()).isEqualTo(2L);
+        assertThat(dto.getTitle()).isEqualTo("Some title");
+        assertThat(dto.getAuthor()).isEqualTo("Some author");
+        assertThat(dto.getDescription()).isEqualTo("Some description");
+        assertThat(dto.getPublisher()).isEqualTo("Some publisher");
+        assertThat(dto.getPublicationDate()).isEqualTo(LocalDate.of(1999,9,19));
+    }
 }
