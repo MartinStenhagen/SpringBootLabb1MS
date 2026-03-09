@@ -2,6 +2,7 @@ package org.example.springbootlabb1ms.book;
 
 import org.example.springbootlabb1ms.ResourceNotFoundException;
 import org.example.springbootlabb1ms.book.dto.BookDTO;
+import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,9 +14,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
@@ -77,8 +81,42 @@ public class BookServiceTest {
         assertThatThrownBy(()-> bookService.findById(100L))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("book with id 100 not found");
-
-
     }
 
+    @Test
+    @DisplayName("create should save and return CreateBookDTO")
+    void create_shouldSaveAndReturnCreateBookDTO()
+    {
+        CreateBookDTO dto = new CreateBookDTO();
+
+        dto.setTitle("Yet another title");
+        dto.setAuthor("Yet another author");
+        dto.setDescription("Yet another description");
+        dto.setPublisher("Yet another publisher");
+        dto.setPublicationDate(LocalDate.of(2000,1,1));
+        dto.setIsbn("Yet another isbn");
+
+        Book savedBook = new Book();
+        savedBook.setId(4L);
+        savedBook.setTitle("Yet another title");
+        savedBook.setAuthor("Yet another author");
+        savedBook.setDescription("Yet another description");
+        savedBook.setPublisher("Yet another publisher");
+        savedBook.setPublicationDate(LocalDate.of(2000,1,1));
+        savedBook.setIsbn("Yet another isbn");
+
+        when(bookRepository.save(any(Book.class))).thenReturn(savedBook);
+
+        BookDTO result = bookService.create(dto);
+
+        assertThat(result.getId()).isEqualTo(savedBook.getId());
+        assertThat(result.getTitle()).isEqualTo(dto.getTitle());
+        assertThat(result.getAuthor()).isEqualTo(dto.getAuthor());
+        assertThat(result.getDescription()).isEqualTo(dto.getDescription());
+        assertThat(result.getPublisher()).isEqualTo(dto.getPublisher());
+        assertThat(result.getPublicationDate()).isEqualTo(dto.getPublicationDate());
+        assertThat(result.getIsbn()).isEqualTo(dto.getIsbn());
+
+        verify(bookRepository).save(any(Book.class));
+    }
 }
