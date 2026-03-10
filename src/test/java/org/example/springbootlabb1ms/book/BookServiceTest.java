@@ -186,7 +186,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("deleteById should delete a book that exists")
     void deleteById_shouldDeleteBookWhenBookExists()
     {
         when(bookRepository.existsById(1L)).thenReturn(true);
@@ -194,6 +194,16 @@ public class BookServiceTest {
         assertDoesNotThrow(()-> bookService.deleteById(1L));
 
         verify(bookRepository).deleteById((1L));
+    }
 
+    @Test
+    @DisplayName("deleteById should throw exception when trying to delete a book that does not exist")
+    void deleteById_shouldThrowExceptionWhenBookNotExists()
+    {
+        when(bookRepository.existsById(1L)).thenReturn(false);
+
+        assertThatThrownBy(()-> bookService
+                .deleteById(1L))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 }
