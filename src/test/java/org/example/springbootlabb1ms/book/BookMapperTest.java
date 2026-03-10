@@ -85,6 +85,7 @@ public class BookMapperTest {
         book.setDescription("Some description");
         book.setPublisher("Some publisher");
         book.setPublicationDate(LocalDate.of(1999,9,19));
+        book.setIsbn("9781234567890");
 
         BookDTO dto = bookMapper.toDto(book);
 
@@ -94,5 +95,6 @@ public class BookMapperTest {
         assertThat(dto.getDescription()).isEqualTo("Some description");
         assertThat(dto.getPublisher()).isEqualTo("Some publisher");
         assertThat(dto.getPublicationDate()).isEqualTo(LocalDate.of(1999,9,19));
+        assertThat(dto.getIsbn()).isEqualTo("9781234567890");
     }
 }

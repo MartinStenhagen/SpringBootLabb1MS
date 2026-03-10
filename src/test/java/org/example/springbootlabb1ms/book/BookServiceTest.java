@@ -43,15 +43,31 @@ public class BookServiceTest {
     void findAll_shouldReturnAllBooksAsDTOs()
     {
         Book book1 = new Book();
+        book1.setId(1L);
+        book1.setTitle("clean code");
+        book1.setAuthor("robert c. martin");
+        book1.setDescription("desc 1");
+        book1.setPublisher("pearson");
+        book1.setPublicationDate(LocalDate.of(2008, 8, 21));
+        book1.setIsbn("isbn-1");
+
         Book book2 = new Book();
+        book2.setId(2L);
+        book2.setTitle("effective java");
+        book2.setAuthor("joshua bloch");
+        book2.setDescription("desc 2");
+        book2.setPublisher("addison-wesley");
+        book2.setPublicationDate(LocalDate.of(2018, 1, 6));
+        book2.setIsbn("isbn-2");
 
         when(bookRepository.findAll()).thenReturn(List.of(book1, book2));
 
         List<BookDTO> result = bookService.findAll();
 
-        assertThat(result.size()).isEqualTo(2);
-        assertThat(result.get(0).getTitle()).isEqualTo(book1.getTitle());
-        assertThat(result.get(1).getTitle()).isEqualTo(book2.getTitle());
+        assertThat(result)
+                .hasSize(2)
+                .extracting(BookDTO::getTitle)
+                .containsExactly("clean code", "effective java");
     }
 
     @Test
@@ -72,6 +88,11 @@ public class BookServiceTest {
         BookDTO result = bookService.findById(3L);
 
         assertThat(result.getId()).isEqualTo(3L);
+        assertThat(result.getTitle()).isEqualTo("Another title");
+        assertThat(result.getAuthor()).isEqualTo("Another author");
+        assertThat(result.getDescription()).isEqualTo("Another description");
+        assertThat(result.getPublisher()).isEqualTo("Another publisher");
+        assertThat(result.getPublicationDate()).isEqualTo(LocalDate.of(1988, 8, 8));
     }
 
     @Test
@@ -86,7 +107,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("create should save and return CreateBookDTO")
+    @DisplayName("create should save and return BookDTO")
     void create_shouldSaveAndReturnCreateBookDTO()
     {
         CreateBookDTO dto = new CreateBookDTO();
@@ -123,7 +144,7 @@ public class BookServiceTest {
     }
 
     @Test
-    @DisplayName("update should update an existing book and return UpdateBookDTO")
+    @DisplayName("update should update an existing book and return BookDTO")
     void update_shouldUpdateAndReturnUpdateBookDTO()
     {
         Book existingBook = new Book();
@@ -165,6 +186,8 @@ public class BookServiceTest {
         assertThat(result.getPublisher()).isEqualTo(updatedBook.getPublisher());
         assertThat(result.getPublicationDate()).isEqualTo(updatedBook.getPublicationDate());
         assertThat(result.getIsbn()).isEqualTo(updatedBook.getIsbn());
+
+        verify(bookRepository).save(existingBook);
     }
 
     @Test
@@ -191,7 +214,7 @@ public class BookServiceTest {
     {
         when(bookRepository.existsById(1L)).thenReturn(true);
 
-        assertDoesNotThrow(()-> bookService.deleteById(1L));
+        bookService.deleteById(1L);
 
         verify(bookRepository).deleteById((1L));
     }
