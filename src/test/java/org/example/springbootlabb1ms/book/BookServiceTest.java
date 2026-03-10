@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
@@ -182,5 +183,17 @@ public class BookServiceTest {
         assertThatThrownBy(()-> bookService
                 .update(1L, dto))
                 .isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("")
+    void deleteById_shouldDeleteBookWhenBookExists()
+    {
+        when(bookRepository.existsById(1L)).thenReturn(true);
+
+        assertDoesNotThrow(()-> bookService.deleteById(1L));
+
+        verify(bookRepository).deleteById((1L));
+
     }
 }
