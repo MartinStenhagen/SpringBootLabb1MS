@@ -1,5 +1,6 @@
 package org.example.springbootlabb1ms.book;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.example.springbootlabb1ms.ResourceNotFoundException;
 import org.example.springbootlabb1ms.book.dto.BookDTO;
 import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional(readOnly=true)
 public class BookService {
 
     private final BookRepository bookRepository;
@@ -34,6 +36,7 @@ public class BookService {
         return bookMapper.toDto(book);
     }
 
+    @Transactional
     public BookDTO create(CreateBookDTO dto) {
         Book book = bookMapper.toEntity(dto);
         Book savedBook = bookRepository.save(book);
@@ -41,6 +44,7 @@ public class BookService {
         return bookMapper.toDto(savedBook);
     }
 
+    @Transactional
     public BookDTO update(Long id, UpdateBookDTO dto) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("book with id " + id + " not found"));
@@ -51,6 +55,7 @@ public class BookService {
         return bookMapper.toDto(updatedBook);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         if (!bookRepository.existsById(id)) {
             throw new ResourceNotFoundException("book with id " + id + " not found");
