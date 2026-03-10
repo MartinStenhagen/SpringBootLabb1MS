@@ -3,6 +3,7 @@ package org.example.springbootlabb1ms.book;
 import org.example.springbootlabb1ms.ResourceNotFoundException;
 import org.example.springbootlabb1ms.book.dto.BookDTO;
 import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
+import org.example.springbootlabb1ms.book.dto.UpdateBookDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -118,5 +119,50 @@ public class BookServiceTest {
         assertThat(result.getIsbn()).isEqualTo(dto.getIsbn());
 
         verify(bookRepository).save(any(Book.class));
+    }
+
+    @Test
+    @DisplayName("update should update an existing book and return UpdateBookDTO")
+    void update_shouldUpdateAndReturnUpdateBookDTO()
+    {
+        Book existingBook = new Book();
+
+        existingBook.setId(1L);
+        existingBook.setTitle("Old title");
+        existingBook.setAuthor("Old author");
+        existingBook.setDescription("Old description");
+        existingBook.setPublisher("Old publisher");
+        existingBook.setPublicationDate(LocalDate.of(2000, 1, 1));
+        existingBook.setIsbn("old-isbn");
+
+        UpdateBookDTO dto = new UpdateBookDTO();
+        dto.setTitle("New title");
+        dto.setAuthor("New author");
+        dto.setDescription("New description");
+        dto.setPublisher("New publisher");
+        dto.setPublicationDate(LocalDate.of(2022, 6, 15));
+        dto.setIsbn("new-isbn");
+
+        Book updatedBook = new Book();
+        updatedBook.setId(1L);
+        updatedBook.setAuthor("New author");
+        updatedBook.setTitle("New title");
+        updatedBook.setDescription("New description");
+        updatedBook.setPublisher("New publisher");
+        updatedBook.setPublicationDate (LocalDate.of(2022, 6, 15));
+        updatedBook.setIsbn("new-isbn");
+
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(existingBook));
+        when(bookRepository.save(existingBook)).thenReturn(updatedBook);
+
+        BookDTO result = bookService.update(1L, dto);
+
+        assertThat(result.getId()).isEqualTo(updatedBook.getId());
+        assertThat(result.getTitle()).isEqualTo(updatedBook.getTitle());
+        assertThat(result.getAuthor()).isEqualTo(updatedBook.getAuthor());
+        assertThat(result.getDescription()).isEqualTo(updatedBook.getDescription());
+        assertThat(result.getPublisher()).isEqualTo(updatedBook.getPublisher());
+        assertThat(result.getPublicationDate()).isEqualTo(updatedBook.getPublicationDate());
+        assertThat(result.getIsbn()).isEqualTo(updatedBook.getIsbn());
     }
 }
