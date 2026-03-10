@@ -165,4 +165,22 @@ public class BookServiceTest {
         assertThat(result.getPublicationDate()).isEqualTo(updatedBook.getPublicationDate());
         assertThat(result.getIsbn()).isEqualTo(updatedBook.getIsbn());
     }
+
+    @Test
+    @DisplayName("update should throw ResourceNotFoundException when a book does not exist")
+    void update_shouldThrowExceptionWhenBookDoesNotExist() {
+        UpdateBookDTO dto = new UpdateBookDTO();
+
+        dto.setTitle("New title");
+        dto.setAuthor("New author");
+        dto.setDescription("New description");
+        dto.setPublisher("New publisher");
+        dto.setPublicationDate(LocalDate.of(2022, 6, 15));
+        dto.setIsbn("new-isbn");
+
+        when(bookRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThatThrownBy(()-> bookService
+                .update(1L, dto))
+                .isInstanceOf(ResourceNotFoundException.class);
+    }
 }
