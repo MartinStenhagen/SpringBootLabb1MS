@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 
 @Entity
-@Table(name = "books")
+@Table(name = "book")
 public class Book {
 
     @Id
@@ -37,6 +37,7 @@ public class Book {
 
     @NotBlank(message = "isbn is required")
     @Size(max = 20, message = "isbn must be 20 characters or less")
+    @Column(unique = true, nullable = false)
     private String isbn;
 
     public Book() {}
