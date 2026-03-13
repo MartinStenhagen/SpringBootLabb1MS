@@ -4,11 +4,11 @@ import jakarta.validation.Valid;
 import org.example.springbootlabb1ms.book.dto.BookDTO;
 import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
 import org.example.springbootlabb1ms.book.dto.UpdateBookDTO;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -30,14 +30,25 @@ public class BookController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("book", new BookDTO());
+        model.addAttribute("book", new CreateBookDTO());
+        model.addAttribute("errors", List.of());
         return "books/create";
     }
 
     @PostMapping
     public String createBook(@Valid @ModelAttribute("book") CreateBookDTO book,
-                             BindingResult bindingResult, Model model) {
+                             BindingResult bindingResult,
+                             Model model) {
+
         if (bindingResult.hasErrors()) {
+
+            List<String> errors = bindingResult.getAllErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
+
+            model.addAttribute("errors", errors);
+
             return "books/create";
         }
 
@@ -58,18 +69,26 @@ public class BookController {
         form.setIsbn(existingBook.getIsbn());
 
         model.addAttribute("book", form);
-        model.addAttribute("bookID", id);
+        model.addAttribute("bookId", id);
+        model.addAttribute("errors", List.of());
         return "books/edit";
     }
 
-    @GetMapping("/{id}")
+    @PostMapping("/{id}")
     public String updateBook(@PathVariable Long id,
                              @Valid @ModelAttribute("book") UpdateBookDTO book,
                              BindingResult bindingResult,
                              Model model) {
 
         if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getAllErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
+
             model.addAttribute("book", book);
+            model.addAttribute("bookId", id);
+            model.addAttribute("errors", errors);
             return "books/edit";
         }
         bookService.update(id, book);

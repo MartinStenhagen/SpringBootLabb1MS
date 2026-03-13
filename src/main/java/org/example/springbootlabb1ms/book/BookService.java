@@ -1,7 +1,7 @@
 package org.example.springbootlabb1ms.book;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.example.springbootlabb1ms.ResourceNotFoundException;
+import org.example.springbootlabb1ms.exception.ResourceNotFoundException;
 import org.example.springbootlabb1ms.book.dto.BookDTO;
 import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
 import org.example.springbootlabb1ms.book.dto.UpdateBookDTO;
