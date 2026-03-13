@@ -1,0 +1,5 @@
+ALTER TABLE book
+    ADD CONSTRAINT uc_book_isbn UNIQUE (isbn);
+
+ALTER TABLE book
+    ALTER COLUMN isbn SET NOT NULL;
