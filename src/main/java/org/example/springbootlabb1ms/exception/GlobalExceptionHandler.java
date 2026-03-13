@@ -9,7 +9,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public String handleResourceNotFoundException(ResourceNotFoundException ex, Model model) {
-        model.addAttribute("error", ex.getMessage());
+        model.addAttribute("message", ex.getMessage());
         return "error/not-found";
     }
 
