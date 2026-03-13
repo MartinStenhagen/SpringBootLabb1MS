@@ -3,6 +3,7 @@ package org.example.springbootlabb1ms.book.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
+import org.example.springbootlabb1ms.book.validation.Isbn;
 
 import java.time.LocalDate;
 
@@ -28,7 +29,8 @@ public class CreateBookDTO {
     private LocalDate publicationDate;
 
     @NotBlank(message = "isbn is required")
-    @Size(max = 20, message = "isbn must be 20 characters or less")
+    @Size(max = 20, message = "isbn must be at most 20 characters")
+    @Isbn
     private String isbn;
 
     public CreateBookDTO() {}

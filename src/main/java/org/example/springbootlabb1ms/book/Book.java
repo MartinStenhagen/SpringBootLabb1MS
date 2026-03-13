@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
+import org.example.springbootlabb1ms.book.validation.Isbn;
 
 import java.time.LocalDate;
 
@@ -37,7 +38,8 @@ public class Book {
 
     @NotBlank(message = "isbn is required")
     @Size(max = 20, message = "isbn must be 20 characters or less")
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 20)
+    @Isbn
     private String isbn;
 
     public Book() {}
