@@ -2,12 +2,25 @@
 @import org.example.springbootlabb1ms.book.dto.BookDTO
 
 @param List<BookDTO> books
+@param String title
 
 <h1>Books</h1>
 
 <p>
     <a href="/books/new">Add new book</a>
 </p>
+
+<form action="/books" method="get">
+    <div>
+        <label for="title">Search by title</label>
+        <input
+                id="title"
+                type="text"
+                name="title"
+                value="${title != null ? title : ""}">
+        <button type="submit">Search</button>
+    </div>
+</form>
 
 @if(books == null || books.isEmpty())
     <p>No books found.</p>

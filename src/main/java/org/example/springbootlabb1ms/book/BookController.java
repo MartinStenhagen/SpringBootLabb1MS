@@ -22,9 +22,15 @@ public class BookController {
     }
 
     @GetMapping
-    public String listBooks(Model model) {
+    public String listBooks(@RequestParam(required = false) String title, Model model) {
         List<BookDTO> books = bookService.findAll();
+
+        if (title != null && !title.isBlank()) {
+            books = bookService.findByTitle(title);
+        } else
+            books = bookService.findAll();
         model.addAttribute("books", books);
+        model.addAttribute("title", title);
         return "books/list";
     }
 
