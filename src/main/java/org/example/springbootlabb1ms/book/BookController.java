@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -22,8 +23,24 @@ public class BookController {
     }
 
     @GetMapping
-    public String listBooks(@RequestParam(required = false) String title, Model model) {
-        List<BookDTO> books = bookService.findAll();
+    public String listBooks(@RequestParam(required = false) String title,
+                            @RequestParam(required = false) String author,
+                            Model model) {
+
+        List<BookDTO> books;
+
+        boolean hasTitle = title != null && !title.isBlank();
+        boolean hasAuthor =  author != null && !author.isBlank();
+
+        if (hasTitle && hasAuthor) {
+            books = bookService.findByTitleAndAuthor(title, author);
+        } else if (hasTitle) {
+            books = bookService.findByTitle(title);
+        } else if (hasAuthor) {
+            books = bookService.findByAuthor(author);
+        } else {
+            books = bookService.findAll();
+        }
 
         if (title != null && !title.isBlank()) {
             books = bookService.findByTitle(title);
@@ -31,6 +48,8 @@ public class BookController {
             books = bookService.findAll();
         model.addAttribute("books", books);
         model.addAttribute("title", title);
+        model.addAttribute("author", author);
+
         return "books/list";
     }
 

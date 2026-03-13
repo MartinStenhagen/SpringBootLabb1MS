@@ -3,6 +3,7 @@
 
 @param List<BookDTO> books
 @param String title
+@param String author
 
 <h1>Books</h1>
 
@@ -18,6 +19,17 @@
                 type="text"
                 name="title"
                 value="${title != null ? title : ""}">
+        <button type="submit">Search</button>
+    </div>
+    <div>
+        <label for="author">Search by author</label>
+        <input
+                id="author"
+                type="text"
+                name="author"
+                value="${author != null ? author : ""}">
+    </div>
+    <div>
         <button type="submit">Search</button>
     </div>
 </form>

@@ -10,5 +10,7 @@ public interface BookRepository extends ListCrudRepository<Book, Long> {
 
     List<Book> findByAuthorContainingIgnoreCase(String author);
 
+    List<Book> findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase(String title, String author);
+
     boolean existsByIsbn(String isbn);
 }

@@ -43,6 +43,20 @@ public class BookService {
                 .toList();
     }
 
+    public List<BookDTO> findByAuthor(String author) {
+        return bookRepository.findByAuthorContainingIgnoreCase(author)
+                .stream()
+                .map(bookMapper::toDto)
+                .toList();
+    }
+
+    public List<BookDTO> findByTitleAndAuthor(String title, String author) {
+        return bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase(title, author)
+                .stream()
+                .map(bookMapper::toDto)
+                .toList();
+    }
+
     @Transactional
     public BookDTO create(CreateBookDTO dto) {
         Book book = bookMapper.toEntity(dto);
