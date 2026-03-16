@@ -1,5 +1,7 @@
 package org.example.springbootlabb1ms.book;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.springbootlabb1ms.exception.ResourceNotFoundException;
 import org.example.springbootlabb1ms.book.dto.BookDTO;
@@ -19,6 +21,24 @@ public class BookService {
     public BookService(BookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
+    }
+
+    public Page<BookDTO> findPaged(String title, String author,Pageable pageable) {
+        boolean hasTitle = title != null  && !title.isBlank();
+        boolean hasAuthor = author != null && !author.isBlank();
+
+        Page<Book> page;
+
+        if (hasTitle && hasAuthor) {
+            page = bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase(title, author, pageable);
+        } else if (hasTitle) {
+            page = bookRepository.findByTitleContainingIgnoreCase(title, pageable);
+        } else if (hasAuthor) {
+            page = bookRepository.findByAuthorContainingIgnoreCase(author, pageable);
+        } else  {
+            page = bookRepository.findAll(pageable);
+        }
+        return page.map(bookMapper::toDto);
     }
 
     public List<BookDTO> findAll() {

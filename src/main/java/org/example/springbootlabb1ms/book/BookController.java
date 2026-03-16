@@ -5,6 +5,9 @@ import org.example.springbootlabb1ms.book.dto.BookDTO;
 import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
 import org.example.springbootlabb1ms.book.dto.UpdateBookDTO;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -25,26 +28,19 @@ public class BookController {
     @GetMapping
     public String listBooks(@RequestParam(required = false) String title,
                             @RequestParam(required = false) String author,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "5") int size,
                             Model model) {
 
-        List<BookDTO> books;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BookDTO> bookPage = bookService.findPaged(title, author, pageable);
 
-        boolean hasTitle = title != null && !title.isBlank();
-        boolean hasAuthor =  author != null && !author.isBlank();
-
-        if (hasTitle && hasAuthor) {
-            books = bookService.findByTitleAndAuthor(title, author);
-        } else if (hasTitle) {
-            books = bookService.findByTitle(title);
-        } else if (hasAuthor) {
-            books = bookService.findByAuthor(author);
-        } else {
-            books = bookService.findAll();
-        }
-
-        model.addAttribute("books", books);
+        model.addAttribute("bookPage", bookPage);
+        model.addAttribute("books", bookPage.getContent());
         model.addAttribute("title", title);
         model.addAttribute("author", author);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("size", size);
 
         return "books/list";
     }
