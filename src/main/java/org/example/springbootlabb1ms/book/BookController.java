@@ -42,10 +42,6 @@ public class BookController {
             books = bookService.findAll();
         }
 
-        if (title != null && !title.isBlank()) {
-            books = bookService.findByTitle(title);
-        } else
-            books = bookService.findAll();
         model.addAttribute("books", books);
         model.addAttribute("title", title);
         model.addAttribute("author", author);
