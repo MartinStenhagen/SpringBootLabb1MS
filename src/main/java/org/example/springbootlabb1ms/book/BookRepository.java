@@ -23,4 +23,5 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase(String title, String author);
 
     boolean existsByIsbn(String isbn);
+    boolean existsByIsbnAndIdNot(String isbn, long id);
 }

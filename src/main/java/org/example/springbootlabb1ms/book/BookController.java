@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.springbootlabb1ms.book.dto.BookDTO;
 import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
 import org.example.springbootlabb1ms.book.dto.UpdateBookDTO;
+import org.example.springbootlabb1ms.exception.DuplicateIsbnException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -65,12 +66,20 @@ public class BookController {
                     .toList();
 
             model.addAttribute("errors", errors);
+            model.addAttribute("book", book);
 
             return "books/create";
         }
 
-        bookService.create(book);
-        return "redirect:/books";
+        try {
+            bookService.create(book);
+            return "redirect:/books";
+
+        } catch (DuplicateIsbnException ex) {
+            model.addAttribute("book", book);
+            model.addAttribute("errors", List.of(ex.getMessage()));
+            return "books/create";
+        }
     }
 
     @GetMapping("/{id}/edit")
@@ -108,9 +117,16 @@ public class BookController {
             model.addAttribute("errors", errors);
             return "books/edit";
         }
-        bookService.update(id, book);
-        return "redirect:/books";
 
+        try {
+            bookService.update(id, book);
+            return "redirect:/books";
+        } catch (DuplicateIsbnException ex) {
+            model.addAttribute("book", book);
+            model.addAttribute("bookId", id);
+            model.addAttribute("errors", List.of(ex.getMessage()));
+            return "books/edit";
+        }
     }
 
     @PostMapping("/{id}/delete")

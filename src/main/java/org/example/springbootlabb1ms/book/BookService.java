@@ -1,5 +1,6 @@
 package org.example.springbootlabb1ms.book;
 
+import org.example.springbootlabb1ms.exception.DuplicateIsbnException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,6 +80,9 @@ public class BookService {
 
     @Transactional
     public BookDTO create(CreateBookDTO dto) {
+        if (bookRepository.existsByIsbn(dto.getIsbn())) {
+            throw new DuplicateIsbnException("isbn " + dto.getIsbn() + " already exists");
+        }
         Book book = bookMapper.toEntity(dto);
         Book savedBook = bookRepository.save(book);
 
@@ -89,6 +93,10 @@ public class BookService {
     public BookDTO update(Long id, UpdateBookDTO dto) {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("book with id " + id + " not found"));
+
+        if (bookRepository.existsByIsbnAndIdNot(dto.getIsbn(), id)) {
+            throw new DuplicateIsbnException("isbn " + dto.getIsbn() + " already exists");
+        }
 
         bookMapper.updateEntity(dto, existingBook);
         Book updatedBook = bookRepository.save(existingBook);

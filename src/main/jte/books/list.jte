@@ -17,22 +17,15 @@
 
 <form action="/books" method="get">
     <div>
-        <label for="title">Search by title</label>
-        <input
-                id="title"
-                type="text"
-                name="title"
-                value="${title != null ? title : ""}">
-        <button type="submit">Search</button>
+        <label for="title">Title</label>
+        <input id="title" type="text" name="title" value="${title != null ? title : ""}">
     </div>
+
     <div>
-        <label for="author">Search by author</label>
-        <input
-                id="author"
-                type="text"
-                name="author"
-                value="${author != null ? author : ""}">
+        <label for="author">Author</label>
+        <input id="author" type="text" name="author" value="${author != null ? author : ""}">
     </div>
+
     <div>
         <button type="submit">Search</button>
     </div>
@@ -67,20 +60,20 @@
                     <form action="/books/${book.getId()}/delete" method="post" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
-                    <div>
-                        @if(!bookPage.isFirst())
-                            <a href="/books?page=${currentPage - 1}&title=${title != null ? title : ""}&author=${author != null ? author : ""}">Previous</a>
-                        @endif
-
-                        <span>Page ${currentPage + 1} of ${bookPage.getTotalPages()}</span>
-
-                        @if(!bookPage.isLast())
-                            <a href="/books?page=${currentPage + 1}&title=${title != null ? title : ""}&author=${author != null ? author : ""}">Next</a>
-                        @endif
-                    </div>
                 </td>
             </tr>
         @endfor
         </tbody>
     </table>
+    <div>
+        @if(!bookPage.isFirst())
+            <a href="/books?page=${currentPage - 1}&title=${title != null ? title : ""}&author=${author != null ? author : ""}">Previous</a>
+        @endif
+
+        <span>Page ${currentPage + 1} of ${bookPage.getTotalPages()}</span>
+
+        @if(!bookPage.isLast())
+            <a href="/books?page=${currentPage + 1}&title=${title != null ? title : ""}&author=${author != null ? author : ""}">Next</a>
+        @endif
+    </div>
 @endif
