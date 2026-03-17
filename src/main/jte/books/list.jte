@@ -13,7 +13,7 @@ title = "Books",
 content = @`
     <h1>Books</h1>
 
-    <a class="primary-link" href="/books/new">Add new book</a>
+    <a class="btn btn-primary" href="/books/new">Add new book</a>
 
     <form class="search-form" action="/books" method="get">
         <div class="form-group">
@@ -65,10 +65,10 @@ content = @`
                         <td>${book.getIsbn()}</td>
                         <td>
                             <div class="actions">
-                                <a href="/books/${book.getId()}/edit">Edit</a>
+                                <a class="btn btn-secondary" href="/books/${book.getId()}/edit">Edit</a>
 
                                 <form action="/books/${book.getId()}/delete" method="post" style="display:inline;">
-                                    <button type="submit">Delete</button>
+                                    <button type="submit" class="btn btn-secondary">Delete</button>
                                 </form>
                             </div>
                         </td>
@@ -80,13 +80,13 @@ content = @`
 
         <div class="pagination">
             @if(!bookPage.isFirst())
-                <a href="/books?page=${currentPage - 1}&title=${title != null ? title : ""}&author=${author != null ? author : ""}">Previous</a>
+                <a class="btn btn-secondary" href="/books?page=${currentPage - 1}&title=${title != null ? title : ""}&author=${author != null ? author : ""}">Previous</a>
             @endif
 
             <span class="page-info">Page ${currentPage + 1} of ${bookPage.getTotalPages()}</span>
 
             @if(!bookPage.isLast())
-                <a href="/books?page=${currentPage + 1}&title=${title != null ? title : ""}&author=${author != null ? author : ""}">Next</a>
+                <a class="btn btn-secondary" href="/books?page=${currentPage + 1}&title=${title != null ? title : ""}&author=${author != null ? author : ""}">Next</a>
             @endif
         </div>
     @endif

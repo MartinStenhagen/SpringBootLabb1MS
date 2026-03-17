@@ -74,8 +74,8 @@ content = @`
         </div>
 
         <div class="form-actions">
-            <button type="submit">Update book</button>
-            <a href="/books">Cancel</a>
+            <button type="submit" class="btn btn-primary">Update book</button>
+            <a href="/books" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 `

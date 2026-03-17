@@ -51,9 +51,11 @@ content = @`
             <input id="isbn" type="text" name="isbn" value="${book.getIsbn() != null ? book.getIsbn() : ""}">
         </div>
 
-        <div>
-            <button type="submit">Create book</button>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create book</button>
+            <a href="/books" class="btn btn-secondary">Back</a>
         </div>
+
     </form>
 `
 )

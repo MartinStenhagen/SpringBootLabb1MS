@@ -188,3 +188,33 @@ tr:last-child td {
     align-items: center;
     gap: 12px;
 }
+
+.btn {
+    display: inline-block;
+    padding: 10px 14px;
+    border: 1px solid #cfcfcf;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font: inherit;
+    text-decoration: none;
+    color: inherit;
+}
+
+.btn:hover {
+    background: #f1f3f5;
+}
+
+.btn-primary {
+    background: #1d4ed8;
+    color: white;
+    border-color: #1d4ed8;
+}
+
+.btn-primary:hover {
+    background: #1e40af;
+}
+
+.btn-secondary {
+    background: #f9fafb;
+}
