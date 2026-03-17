@@ -5,26 +5,24 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${title}</title>
-
-    <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<header>
-    <h2>📚 Book App</h2>
-    <hr>
+<header class="site-header">
+    <div class="container brand">
+        <span class="brand-icon">📚</span>
+        <div>
+            <div class="brand-title">Book App</div>
+        </div>
+    </div>
 </header>
 
-<main>
+<main class="container page-content">
     ${content}
 </main>
-
-<footer>
-    <hr>
-    <small>spring boot labb</small>
-</footer>
 
 </body>
 </html>
