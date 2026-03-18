@@ -18,10 +18,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.tuple;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
@@ -229,4 +229,72 @@ public class BookServiceTest {
                 .deleteById(1L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
+
+    @Test
+    @DisplayName("findByTitle should return matching books as DTOs")
+    void findByTitle_shouldReturnMatchingBooks() {
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Clean Code");
+        book.setAuthor("Robert C. Martin");
+        book.setDescription("desc");
+        book.setPublisher("Pearson");
+        book.setPublicationDate(LocalDate.of(2008, 8, 21));
+        book.setIsbn("9780132350884");
+
+        when(bookRepository.findByTitleContainingIgnoreCase("clean")).thenReturn(List.of(book));
+
+        List<BookDTO> result = bookService.findByTitle("clean");
+
+        assertThat(result)
+                .hasSize(1)
+                .extracting(BookDTO::getTitle)
+                .containsExactly("Clean Code");
+    }
+
+    @Test
+    @DisplayName("findByAuthor should return matching books as DTOs")
+    void findByAuthor_shouldReturnMatchingBooks() {
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Clean Code");
+        book.setAuthor("Robert C. Martin");
+        book.setDescription("desc");
+        book.setPublisher("Pearson");
+        book.setPublicationDate(LocalDate.of(2008, 8, 21));
+        book.setIsbn("9780132350884");
+
+        when(bookRepository.findByAuthorContainingIgnoreCase("martin")).thenReturn(List.of(book));
+
+        List<BookDTO> result = bookService.findByAuthor("martin");
+
+        assertThat(result)
+                .hasSize(1)
+                .extracting(BookDTO::getAuthor)
+                .containsExactly("Robert C. Martin");
+    }
+
+    @Test
+    @DisplayName("findByTitleAndAuthor should return matching books as DTOs")
+    void findByTitleAndAuthor_shouldReturnMatchingBooks() {
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Clean Code");
+        book.setAuthor("Robert C. Martin");
+        book.setDescription("desc");
+        book.setPublisher("Pearson");
+        book.setPublicationDate(LocalDate.of(2008, 8, 21));
+        book.setIsbn("9780132350884");
+
+        when(bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase("clean", "martin"))
+                .thenReturn(List.of(book));
+
+        List<BookDTO> result = bookService.findByTitleAndAuthor("clean", "martin");
+
+        assertThat(result)
+                .hasSize(1)
+                .extracting(BookDTO::getTitle, BookDTO::getAuthor)
+                .containsExactly(tuple("Clean Code", "Robert C. Martin"));
+    }
+
 }
