@@ -1,5 +1,6 @@
 package org.example.springbootlabb1ms.book;
 
+import org.example.springbootlabb1ms.exception.DuplicateIsbnException;
 import org.example.springbootlabb1ms.exception.ResourceNotFoundException;
 import org.example.springbootlabb1ms.book.dto.BookDTO;
 import org.example.springbootlabb1ms.book.dto.CreateBookDTO;
@@ -322,6 +323,52 @@ public class BookServiceTest {
                 .hasSize(1)
                 .extracting(BookDTO::getTitle)
                 .containsExactly("Clean Code");
+    }
+
+    @Test
+    @DisplayName("create should throw DuplicateIsbnException when isbn already exists")
+    void create_shouldThrowDuplicateIsbnExceptionWhenIsbnAlreadyExists() {
+        CreateBookDTO dto = new CreateBookDTO();
+        dto.setTitle("Clean Code");
+        dto.setAuthor("Robert C. Martin");
+        dto.setDescription("desc");
+        dto.setPublisher("Pearson");
+        dto.setPublicationDate(LocalDate.of(2008, 8, 21));
+        dto.setIsbn("9780132350884");
+
+        when(bookRepository.existsByIsbn("9780132350884")).thenReturn(true);
+
+        assertThatThrownBy(() -> bookService.create(dto))
+                .isInstanceOf(DuplicateIsbnException.class)
+                .hasMessageContaining("isbn " + dto.getIsbn() + " already exists");
+    }
+
+    @Test
+    @DisplayName("update should throw DuplicateIsbnException when isbn belongs to another book")
+    void update_shouldThrowDuplicateIsbnExceptionWhenIsbnBelongsToAnotherBook() {
+        UpdateBookDTO dto = new UpdateBookDTO();
+        dto.setTitle("Clean Code");
+        dto.setAuthor("Robert C. Martin");
+        dto.setDescription("desc");
+        dto.setPublisher("Pearson");
+        dto.setPublicationDate(LocalDate.of(2008, 8, 21));
+        dto.setIsbn("9780132350884");
+
+        Book existingBook = new Book();
+        existingBook.setId(1L);
+        existingBook.setTitle("Old");
+        existingBook.setAuthor("Old");
+        existingBook.setDescription("Old");
+        existingBook.setPublisher("Old");
+        existingBook.setPublicationDate(LocalDate.of(2000, 1, 1));
+        existingBook.setIsbn("1111111111");
+
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(existingBook));
+        when(bookRepository.existsByIsbnAndIdNot("9780132350884", 1L)).thenReturn(true);
+
+        assertThatThrownBy(() -> bookService.update(1L, dto))
+                .isInstanceOf(DuplicateIsbnException.class)
+                .hasMessageContaining("isbn " + dto.getIsbn() + " already exists");
     }
 
 }
