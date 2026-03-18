@@ -159,4 +159,126 @@ class BookControllerTest {
                 .andExpect(view().name("error/not-found"))
                 .andExpect(model().attributeExists("message"));
     }
+
+    @Test
+    @DisplayName("POST /books with duplicate isbn should return create view with errors")
+    void createBook_withDuplicateIsbn_shouldReturnCreateViewWithErrors() throws Exception {
+        org.mockito.Mockito.doThrow(new org.example.springbootlabb1ms.exception.DuplicateIsbnException("isbn 9780132350884 already exists"))
+                .when(bookService).create(org.mockito.ArgumentMatchers.any(org.example.springbootlabb1ms.book.dto.CreateBookDTO.class));
+
+        mockMvc.perform(post("/books")
+                        .param("title", "Clean Code")
+                        .param("author", "Robert C. Martin")
+                        .param("description", "A book about clean code")
+                        .param("publisher", "Pearson")
+                        .param("publicationDate", "2008-08-21")
+                        .param("isbn", "9780132350884"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("books/create"))
+                .andExpect(model().attributeExists("book"))
+                .andExpect(model().attributeExists("errors"));
+    }
+
+    @Test
+    @DisplayName("GET /books with title filter should return filtered list view")
+    void listBooks_withTitleFilter_shouldReturnFilteredListView() throws Exception {
+        Page<BookDTO> page = new org.springframework.data.domain.PageImpl<>(List.of(new BookDTO()));
+
+        when(bookService.findPaged(org.mockito.ArgumentMatchers.eq("clean"),
+                org.mockito.ArgumentMatchers.isNull(),
+                org.mockito.ArgumentMatchers.any(org.springframework.data.domain.Pageable.class)))
+                .thenReturn(page);
+
+        mockMvc.perform(get("/books").param("title", "clean"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("books/list"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attributeExists("bookPage"))
+                .andExpect(model().attribute("title", "clean"));
+    }
+
+    @Test
+    @DisplayName("GET /books with author filter should return filtered list view")
+    void listBooks_withAuthorFilter_shouldReturnFilteredListView() throws Exception {
+        Page<BookDTO> page = new org.springframework.data.domain.PageImpl<>(List.of(new BookDTO()));
+
+        when(bookService.findPaged(org.mockito.ArgumentMatchers.isNull(),
+                org.mockito.ArgumentMatchers.eq("martin"),
+                org.mockito.ArgumentMatchers.any(org.springframework.data.domain.Pageable.class)))
+                .thenReturn(page);
+
+        mockMvc.perform(get("/books").param("author", "martin"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("books/list"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attributeExists("bookPage"))
+                .andExpect(model().attribute("author", "martin"));
+    }
+
+    @Test
+    @DisplayName("GET /books with title and author filter should return filtered list view")
+    void listBooks_withTitleAndAuthorFilter_shouldReturnFilteredListView() throws Exception {
+        Page<BookDTO> page = new org.springframework.data.domain.PageImpl<>(List.of(new BookDTO()));
+
+        when(bookService.findPaged(org.mockito.ArgumentMatchers.eq("clean"),
+                org.mockito.ArgumentMatchers.eq("martin"),
+                org.mockito.ArgumentMatchers.any(org.springframework.data.domain.Pageable.class)))
+                .thenReturn(page);
+
+        mockMvc.perform(get("/books")
+                        .param("title", "clean")
+                        .param("author", "martin"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("books/list"))
+                .andExpect(model().attribute("title", "clean"))
+                .andExpect(model().attribute("author", "martin"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attributeExists("bookPage"));
+    }
+
+    @Test
+    @DisplayName("GET /books with page and size should return paged list view")
+    void listBooks_withPagination_shouldReturnPagedListView() throws Exception {
+        Page<BookDTO> page = new org.springframework.data.domain.PageImpl<>(
+                List.of(new BookDTO(), new BookDTO()),
+                org.springframework.data.domain.PageRequest.of(1, 5),
+                12
+        );
+
+        when(bookService.findPaged(org.mockito.ArgumentMatchers.isNull(),
+                org.mockito.ArgumentMatchers.isNull(),
+                org.mockito.ArgumentMatchers.any(org.springframework.data.domain.Pageable.class)))
+                .thenReturn(page);
+
+        mockMvc.perform(get("/books")
+                        .param("page", "1")
+                        .param("size", "5"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("books/list"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attributeExists("bookPage"))
+                .andExpect(model().attribute("currentPage", 1))
+                .andExpect(model().attribute("size", 5));
+    }
+
+    @Test
+    @DisplayName("POST /books/{id} with duplicate isbn should return edit view with errors")
+    void updateBook_withDuplicateIsbn_shouldReturnEditViewWithErrors() throws Exception {
+        org.mockito.Mockito.doThrow(new org.example.springbootlabb1ms.exception.DuplicateIsbnException("isbn 9780132350884 already exists"))
+                .when(bookService).update(org.mockito.ArgumentMatchers.eq(1L),
+                        org.mockito.ArgumentMatchers.any(org.example.springbootlabb1ms.book.dto.UpdateBookDTO.class));
+
+        mockMvc.perform(post("/books/1")
+                        .param("title", "Clean Code")
+                        .param("author", "Robert C. Martin")
+                        .param("description", "A book about clean code")
+                        .param("publisher", "Pearson")
+                        .param("publicationDate", "2008-08-21")
+                        .param("isbn", "9780132350884"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("books/edit"))
+                .andExpect(model().attributeExists("book"))
+                .andExpect(model().attributeExists("bookId"))
+                .andExpect(model().attributeExists("errors"));
+    }
 }
