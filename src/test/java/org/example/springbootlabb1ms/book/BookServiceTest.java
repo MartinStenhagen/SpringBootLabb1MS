@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -295,6 +299,29 @@ public class BookServiceTest {
                 .hasSize(1)
                 .extracting(BookDTO::getTitle, BookDTO::getAuthor)
                 .containsExactly(tuple("Clean Code", "Robert C. Martin"));
+    }
+
+    @Test
+    @DisplayName("findPaged should use title and author filter when both are provided")
+    void findPaged_shouldUseTitleAndAuthorFilterWhenBothProvided() {
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Clean Code");
+        book.setAuthor("Robert C. Martin");
+
+        Page<Book> page = new PageImpl<>(List.of(book), pageable, 1);
+
+        when(bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase("clean", "martin", pageable))
+                .thenReturn(page);
+
+        Page<BookDTO> result = bookService.findPaged("clean", "martin", pageable);
+
+        assertThat(result.getContent())
+                .hasSize(1)
+                .extracting(BookDTO::getTitle)
+                .containsExactly("Clean Code");
     }
 
 }
