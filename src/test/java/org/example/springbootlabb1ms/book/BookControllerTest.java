@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -31,7 +32,7 @@ class BookControllerTest {
     private BookService bookService;
 
     @Test
-    @DisplayName("GET /books should return list view with books")
+    @DisplayName("GET /books should return list view with paged books")
     void listBooks_shouldReturnListView() throws Exception {
         BookDTO book = new BookDTO();
         book.setId(1L);
@@ -42,12 +43,20 @@ class BookControllerTest {
         book.setPublicationDate(LocalDate.of(2008, 8, 21));
         book.setIsbn("9780132350884");
 
-        when(bookService.findAll()).thenReturn(List.of(book));
+        Page<BookDTO> page = new org.springframework.data.domain.PageImpl<>(List.of(book));
+
+        when(bookService.findPaged(org.mockito.ArgumentMatchers.isNull(),
+                org.mockito.ArgumentMatchers.isNull(),
+                org.mockito.ArgumentMatchers.any(org.springframework.data.domain.Pageable.class)))
+                .thenReturn(page);
 
         mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("books/list"))
-                .andExpect(model().attributeExists("books"));
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attributeExists("bookPage"))
+                .andExpect(model().attributeExists("currentPage"))
+                .andExpect(model().attributeExists("size"));
     }
 
     @Test
