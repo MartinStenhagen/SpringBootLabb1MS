@@ -371,4 +371,70 @@ public class BookServiceTest {
                 .hasMessageContaining("isbn " + dto.getIsbn() + " already exists");
     }
 
+    @Test
+    @DisplayName("findPaged should return all books when no filters are provided")
+    void findPaged_shouldReturnAllBooksWhenNoFiltersAreProvided() {
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Clean Code");
+        book.setAuthor("Robert C. Martin");
+
+        Page<Book> page = new PageImpl<>(List.of(book), pageable, 1);
+
+        when(bookRepository.findAll(pageable)).thenReturn(page);
+
+        Page<BookDTO> result = bookService.findPaged(null, null, pageable);
+
+        assertThat(result.getContent())
+                .hasSize(1)
+                .extracting(BookDTO::getTitle)
+                .containsExactly("Clean Code");
+    }
+
+    @Test
+    @DisplayName("findPaged should use title filter when only title is provided")
+    void findPaged_shouldUseTitleFilterWhenOnlyTitleIsProvided() {
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Clean Code");
+        book.setAuthor("Robert C. Martin");
+
+        Page<Book> page = new PageImpl<>(List.of(book), pageable, 1);
+
+        when(bookRepository.findByTitleContainingIgnoreCase("clean", pageable)).thenReturn(page);
+
+        Page<BookDTO> result = bookService.findPaged("clean", null, pageable);
+
+        assertThat(result.getContent())
+                .hasSize(1)
+                .extracting(BookDTO::getTitle)
+                .containsExactly("Clean Code");
+    }
+
+    @Test
+    @DisplayName("findPaged should use author filter when only author is provided")
+    void findPaged_shouldUseAuthorFilterWhenOnlyAuthorIsProvided() {
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Book book = new Book();
+        book.setId(1L);
+        book.setTitle("Clean Code");
+        book.setAuthor("Robert C. Martin");
+
+        Page<Book> page = new PageImpl<>(List.of(book), pageable, 1);
+
+        when(bookRepository.findByAuthorContainingIgnoreCase("martin", pageable)).thenReturn(page);
+
+        Page<BookDTO> result = bookService.findPaged(null, "martin", pageable);
+
+        assertThat(result.getContent())
+                .hasSize(1)
+                .extracting(BookDTO::getAuthor)
+                .containsExactly("Robert C. Martin");
+    }
+
 }
