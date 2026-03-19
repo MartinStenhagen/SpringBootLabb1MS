@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-    Page<Book> findAll(Pageable pageable);
-
     Page<Book> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
     Page<Book> findByAuthorContainingIgnoreCase(String author, Pageable pageable);
