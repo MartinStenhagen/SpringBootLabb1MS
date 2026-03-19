@@ -281,4 +281,18 @@ class BookControllerTest {
                 .andExpect(model().attributeExists("bookId"))
                 .andExpect(model().attributeExists("errors"));
     }
+
+    @Test
+    @DisplayName("POST /books/{id} with valid data should redirect to /books")
+    void updateBook_withValidData_shouldRedirect() throws Exception {
+        mockMvc.perform(post("/books/1")
+                        .param("title", "Updated title")
+                        .param("author", "Updated author")
+                        .param("description", "Updated description")
+                        .param("publisher", "Updated publisher")
+                        .param("publicationDate", "2020-01-01")
+                        .param("isbn", "9780132350884"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/books"));
+    }
 }
